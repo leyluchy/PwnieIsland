@@ -1,0 +1,101 @@
+Cuando aprieto espacio para saltar:
+
+Con breakpoint en ClientWorld::Jump(bool)
+
+#0  ClientWorld::Jump (this=0x8c0ff20, state=true) at ClientWorld.cpp:74
+#1  0x00007fe67cfc457a in Player::SetJumpState (this=0x14818cc0, jumping=true) at Player.cpp:382
+#2  0x00007fe67cfc45ac in non-virtual thunk to Player::SetJumpState(bool) (this=0x14818d68, jumping=true) at Player.cpp:383
+continue
+#0  ClientWorld::Jump (this=0x8c0ff20, state=false) at ClientWorld.cpp:74
+#1  0x00007fe67cfc457a in Player::SetJumpState (this=0x14818cc0, jumping=false) at Player.cpp:382
+#2  0x00007fe67cfc45ac in non-virtual thunk to Player::SetJumpState(bool) (this=0x14818d68, jumping=false) at Player.cpp:383
+
+
+Con breakpoint en Player::SetJumpState(bool)
+
+#0  0x00007fe67cf83f30 in Player::SetJumpState(bool)@plt () from /home/leyluchy/Documents/PwnAdventure3/cliente/PwnAdventure3_Data/PwnAdventure3/PwnAdventure3/Binaries/Linux/libGameLogic.so
+#1  0x00007fe67cfc45ac in non-virtual thunk to Player::SetJumpState(bool) (this=0x14818d68, jumping=true) at Player.cpp:383
+continue
+#0  Player::SetJumpState (this=0x14818cc0, jumping=true) at Player.cpp:382
+#1  0x00007fe67cfc45ac in non-virtual thunk to Player::SetJumpState(bool) (this=0x14818d68, jumping=true) at Player.cpp:383
+continue
+#0  0x00007fe67cf83f30 in Player::SetJumpState(bool)@plt () from /home/leyluchy/Documents/PwnAdventure3/cliente/PwnAdventure3_Data/PwnAdventure3/PwnAdventure3/Binaries/Linux/libGameLogic.so
+#1  0x00007fe67cfc45ac in non-virtual thunk to Player::SetJumpState(bool) (this=0x14818d68, jumping=false) at Player.cpp:383
+continue
+#0  Player::SetJumpState (this=0x14818cc0, jumping=false) at Player.cpp:382
+#1  0x00007fe67cfc45ac in non-virtual thunk to Player::SetJumpState(bool) (this=0x14818d68, jumping=false) at Player.cpp:383
+
+----------------------------------------
+Cuando aprieto shift:
+
+Con breakpoint en GameServerConnection::Sprint(bool) (2 locations)
+
+#0  0x00007fe67cf8f590 in GameServerConnection::Sprint(bool)@plt () from /home/leyluchy/Documents/PwnAdventure3/cliente/PwnAdventure3_Data/PwnAdventure3/PwnAdventure3/Binaries/Linux/libGameLogic.so
+#1  0x00007fe67cfaf590 in ClientWorld::Sprint (this=0x8c0ff20, state=false) at ClientWorld.cpp:84
+#2  0x00007fe67cfc45fa in Player::SetSprintState (this=0x14818cc0, sprinting=false) at Player.cpp:388
+#3  0x00007fe67cfc462c in non-virtual thunk to Player::SetSprintState(bool) (this=0x14818d68, sprinting=false) at Player.cpp:389
+continue x2 (Sera que suelto shift?)
+#0  0x00007fe67cf8f590 in GameServerConnection::Sprint(bool)@plt () from /home/leyluchy/Documents/PwnAdventure3/cliente/PwnAdventure3_Data/PwnAdventure3/PwnAdventure3/Binaries/Linux/libGameLogic.so
+#1  0x00007fe67cfaf590 in ClientWorld::Sprint (this=0x8c0ff20, state=true) at ClientWorld.cpp:84
+#2  0x00007fe67cfc45fa in Player::SetSprintState (this=0x14818cc0, sprinting=true) at Player.cpp:388
+#3  0x00007fe67cfc462c in non-virtual thunk to Player::SetSprintState(bool) (this=0x14818d68, sprinting=true) at Player.cpp:389
+
+Conclusion: apretar shift es not sprinting, sin apretar es sprinting. Se informa al server cada vez que aprieto y suelto.
+
+--------------------------------------
+Breakpoint en GameServerConnection::MoveAndGetEvents (2 locations)
+
+Apenas di continue
+#0  0x00007fe67cf91640 in GameServerConnection::MoveAndGetEvents(Player*)@plt ()
+   from /home/leyluchy/Documents/PwnAdventure3/cliente/PwnAdventure3_Data/PwnAdventure3/PwnAdventure3/Binaries/Linux/libGameLogic.so
+#1  0x00007fe67cfaf31c in ClientWorld::Tick (this=0x8c0ff20, deltaTime=0.400000006) at ClientWorld.cpp:35
+#2  0x00007fe67cfec345 in GameAPI::Tick (this=0x13c8f8b8, deltaTime=0.400000006) at GameLogic.cpp:743
+continue
+#0  GameServerConnection::MoveAndGetEvents (this=0x6cd0a20, player=0x14818cc0) at GameServerConnection.cpp:790
+#1  0x00007fe67cfaf31c in ClientWorld::Tick (this=0x8c0ff20, deltaTime=0.400000006) at ClientWorld.cpp:35
+#2  0x00007fe67cfec345 in GameAPI::Tick (this=0x13c8f8b8, deltaTime=0.400000006) at GameLogic.cpp:743
+continue... (Se repite infinitamente)
+
+Conclusion: por cada tick envia la posicion y escucha eventos
+
+---------------------------------
+Breakpoint en IFastTravel
+
+Presiono E en casilla de Fast Travel de Tail Montains
+#0  0x00007f4f8bd16320 in IFastTravel::IFastTravel()@plt ()
+   from /home/leyluchy/Documents/PwnAdventure3/cliente/PwnAdventure3_Data/PwnAdventure3/PwnAdventure3/Binaries/Linux/libGameLogic.so
+#1  0x00007f4f8bd76560 in FastTravelList::FastTravelList (this=0x8ee2540, 
+    dests=std::vector of length 3, capacity 4 = {...}) at Include/Player.h:265
+#2  0x00007f4f8bd65e5d in FastTravelList::FastTravelList (this=0x8ee2540, 
+    dests=std::vector of length 3, capacity 4 = {...}) at Include/Player.h:265
+#3  0x00007f4f8bd61466 in Player::GetFastTravelDestinations (this=0x14ca1cc0, 
+    origin=0x7fff0210fc90 "TailMountains") at Player.cpp:1709
+#4  0x00007f4f8bd6168f in non-virtual thunk to Player::GetFastTravelDestinations(char const*) (this=0x14ca1d68, origin=0x7fff0210fc90 "TailMountains")
+    at Player.cpp:1710
+continue
+#0  IFastTravel::IFastTravel (this=0xb30b210) at Include/Player.h:76
+#1  0x00007f4f8bd76560 in FastTravelList::FastTravelList (this=0xb30b210, dests=std::vector of length 3, capacity 4 = {...}) at Include/Player.h:265
+#2  0x00007f4f8bd65e5d in FastTravelList::FastTravelList (this=0xb30b210, dests=std::vector of length 3, capacity 4 = {...}) at Include/Player.h:265
+#3  0x00007f4f8bd61466 in Player::GetFastTravelDestinations (this=0x14ca1cc0, origin=0x7fff0210fc90 "TailMountains") at Player.cpp:1709
+#4  0x00007f4f8bd6168f in non-virtual thunk to Player::GetFastTravelDestinations(char const*) (this=0x14ca1d68, origin=0x7fff0210fc90 "TailMountains") at Player.cpp:1710
+continue
+
+Breakpoint en IsAvailable
+Presiono E en casilla de Fast Travel de Tail Montains
+#0  TownDestination::IsAvailable (this=0x71b0240, player=0x14ca1cc0) at ./FastTravelDestination.h:23
+#1  0x00007f4f8bdc615b in FastTravelDestination::AddToListIfValid (this=0x71b0240, list=std::vector of length 0, capacity 0, player=0x14ca1cc0, Python Exception <class 'gdb.error'> No type named std::basic_string<char>::_Rep.: 
+currentRegion=) at FastTravelDestination.cpp:29
+#2  0x00007f4f8bd61148 in Player::GetFastTravelDestinations (this=0x14ca1cc0, origin=0x7fff0210fc90 "TailMountains") at Player.cpp:1704
+#3  0x00007f4f8bd6168f in non-virtual thunk to Player::GetFastTravelDestinations(char const*) (this=0x14ca1d68, origin=0x7fff0210fc90 "TailMountains") at Player.cpp:1710
+continue
+#0  FastTravelDestination::IsAvailable (this=0x71b0430, player=0x14ca1cc0) at FastTravelDestination.cpp:13
+#1  0x00007f4f8bdc615b in FastTravelDestination::AddToListIfValid (this=0x71b0430, list=std::vector of length 1, capacity 1 = {...}, player=0x14ca1cc0, Python Exception <class 'gdb.error'> No type named std::basic_string<char>::_Rep.: 
+currentRegion=) at FastTravelDestination.cpp:29
+#2  0x00007f4f8bd61222 in Player::GetFastTravelDestinations (this=0x14ca1cc0, origin=0x7fff0210fc90 "TailMountains") at Player.cpp:1705
+#3  0x00007f4f8bd6168f in non-virtual thunk to Player::GetFastTravelDestinations(char const*) (this=0x14ca1d68, origin=0x7fff0210fc90 "TailMountains") at Player.cpp:1710
+continue
+#0  FastTravelDestination::IsAvailable (this=0x71b0620, player=0x14ca1cc0) at FastTravelDestination.cpp:13
+#1  0x00007f4f8bdc615b in FastTravelDestination::AddToListIfValid (this=0x71b0620, list=std::vector of length 2, capacity 2 = {...}, player=0x14ca1cc0, Python Exception <class 'gdb.error'> No type named std::basic_string<char>::_Rep.: 
+currentRegion=) at FastTravelDestination.cpp:29
+#2  0x00007f4f8bd613fd in Player::GetFastTravelDestinations (this=0x14ca1cc0, origin=0x7fff0210fc90 "TailMountains") at Player.cpp:1707
+continue
